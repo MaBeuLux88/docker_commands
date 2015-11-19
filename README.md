@@ -108,4 +108,23 @@ docker run ping:1.0
 docker run ping:1.0 google.fr
 ```
 
+## Compile and run Java Application
+
+```
+FROM java
+COPY Hello.java /home/java/src/
+WORKDIR /home/java
+RUN mkdir bin
+RUN javac -d bin src/Hello.java
+ENTRYPOINT ["java", "-cp", "bin", "Hello"]
+```
+
+Run like this : 
+```
+docker build -t hellojava .
+docker run hellojava
+// to check it's ok inside the container
+docker run -it --entrypoint bash hellojava
+```
+
 
