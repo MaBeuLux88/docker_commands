@@ -69,4 +69,18 @@ Build image from Dockerfile in the current folder : `docker build .`
 
 Build image from Dockerfile with tag : `docker build -t mabeulux88/myImage:1.0 <path>`
 
+Build image from Dockerfile without cache : `docker build --no-cache .`
+
 Remove image : `docker rmi <ID>`
+
+Show build layer history : `docker history <ID>`
+
+# Example Dockerfile
+
+```
+#Super comment and super image
+FROM debian
+RUN apt-get update
+RUN apt-get install -y wget vim 
+CMD ping localhost -c 20
+```
