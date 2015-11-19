@@ -77,10 +77,35 @@ Show build layer history : `docker history <ID>`
 
 # Example Dockerfile
 
+## ping localhost
+
+```
+#Super comment and super image
+FROM debian
+RUN apt-get update
+RUN apt-get install -y wget vim figlet
+CMD ping localhost -c 20
+CMD ["ping", "localhost", "-c", "20"]
+ENTRYPOINT ["figlet"]
+```
+
+## ping localhost by default but can accept "google.fr" as a parameter.
+
 ```
 #Super comment and super image
 FROM debian
 RUN apt-get update
 RUN apt-get install -y wget vim 
-CMD ping localhost -c 20
+RUN apt-get install -y figlet
+ENTRYPOINT ["ping", "-c", "5"]
+CMD ["localhost"]
 ```
+
+Run like this : 
+```
+docker build -t ping:1.0 .
+docker run ping:1.0
+docker run ping:1.0 google.fr
+```
+
+
