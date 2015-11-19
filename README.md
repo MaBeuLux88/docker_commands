@@ -55,3 +55,18 @@ View logs 5 last lines in live : `docker --tail 5 -f <ID>`
 
 Get container infos in JSON : `docker inspect <ID>`
 
+Get IP address from JSON : `docker inspect --format='{{.NetworkSettings.IPAddress}}' <ID>`
+
+Get valid JSON out of it : `docker inspect --format='{{json .NetworkSettings}}' <ID>`
+
+Show container differences from last layer : `docker diff <ID>`
+
+Commit the state of a container : `docker commit <ID> mabeulux88/debian_better:1.0`
+
+Build image from Dockerfile : `docker build <path>`
+
+Build image from Dockerfile in the current folder : `docker build .`
+
+Build image from Dockerfile with tag : `docker build -t mabeulux88/myImage:1.0 <path>`
+
+Remove image : `docker rmi <ID>`
