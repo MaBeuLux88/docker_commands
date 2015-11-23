@@ -35,6 +35,8 @@ Kill container : `docker kill <ID>`
 
 Remove container : `docker rm <ID>`
 
+Remove container and its volumes : `docker 'rm -v <ID>`
+
 Start container : `docker start <ID>`
 
 Start container and attach : `docker start -a <ID>`
@@ -75,6 +77,32 @@ Remove image : `docker rmi <ID>`
 
 Show build layer history : `docker history <ID>`
 
+Login to Docker Hub : `docker login`
+
+Push image to Docker Hub : `docker push <repo:tag>` with repo = "mabeulux88/hellojava"
+
+Tag image : `docker tag <ID> repo:tag`
+
+Create container with volume : `docker run -d -it -v /data/www debian`
+
+Get volume path : `docker inspect -f '{{json .Volumes}}' <ID>`
+
+Mount host folders to a volume : `docker run -v [host path]:[container path]:[rw|ro]`
+
+Create data container : `docker run --name datacontainer -v /data/app1 busybox true`
+
+Run container using data container : `docker run -it --volumes-from datacontainer ubuntu`
+
+Backup container : `docker run --volumes-from logdata -v /home/toto/backups:/backups ubuntu tar cvzf /backup/my_logs.tar /var/log/app`
+
+Map port 8080 tomcat container to 80 on host : `docker run -d -p 80:8080 tomcat` 
+
+Execute command in container : `docker exec <ID> my_command`
+
+Show the ports mapped : `docker port <ID>`
+
+
+
 # Example Dockerfile
 
 ## ping localhost
@@ -112,6 +140,7 @@ docker run ping:1.0 google.fr
 
 ```
 FROM java
+# The "/" at the end of /home/java/src/ is mandatory
 COPY Hello.java /home/java/src/
 WORKDIR /home/java
 RUN mkdir bin
@@ -127,4 +156,60 @@ docker run hellojava
 docker run -it --entrypoint bash hellojava
 ```
 
+# Fix Installation Docker Debian Stretch (testing)
+
+By default, when docker is installed on a Debian Stretch with `curl -sSL https://get.docker.com/ | sh`, 
+it runs on the Storage Driver "Devicemapper" which is utterly slow!
+
+You can check this in the `docker info`. 
+
+My problem was that Devicemapper is utterly slow : 
+
+For example, this command was taking me 6-7 seconds :
+```
+time docker run -it --rm debian echo "Hello World"
+```
+
+Here is how to fix it by switching to your storage engine to "overlay" but it's going to wiped all the images / containers you have.
+```
+sudo service docker stop
+sudo rm -rf /var/lib/docker
+sudo mkdir -p /etc/systemd/system/docker.service.d/
+sudo vim /etc/systemd/system/docker.service.d/override.conf
+
+copy/paste this then save and exit : 
+[Service]
+ExecStart=
+ExecStart=/usr/bin/docker daemon -s overlay -H fd:// --userland-proxy=false --exec-opt native.cgroupdriver=cgroupfs
+
+sudo systemctl daemon-reload
+sudo service docker start
+```
+
+Now the `docker info` command should display something like this :
+
+```
+Containers: 0
+Images: 4
+Server Version: 1.9.1
+Storage Driver: overlay
+ Backing Filesystem: extfs
+Execution Driver: native-0.2
+Logging Driver: json-file
+Kernel Version: 4.2.0-1-amd64
+Operating System: Debian GNU/Linux stretch/sid (containerized)
+CPUs: 4
+Total Memory: 7.678 GiB
+Name: zenikaMax
+ID: WH3X:DUHT:5J62:LX6E:DT24:5TL4:W75D:7H6M:P3PQ:7323:RMI7:H2BK
+Username: mabeulux88
+Registry: https://index.docker.io/v1/
+WARNING: No memory limit support
+WARNING: No swap limit support
+```
+
+Now my Storage Driver is using the "overlay" and my initial command takes less than a second to run!!!
+
+Hope this help :-) !
+Thank you @vdemeester !
 
