@@ -9,6 +9,8 @@ Version docker : `docker version`
 
 Start Hello World : `docker run hello-world`
 
+List all the images already downloaded : `docker images`
+
 Pull an image from Docker Hub : `docker pull tomcat` or `docker pull ubuntu:12.04`
 
 Start container and execute command : `docker run ubuntu echo "Hello World"`
