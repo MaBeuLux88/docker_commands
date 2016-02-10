@@ -37,7 +37,7 @@ Kill container : `docker kill <ID>`
 
 Remove container : `docker rm <ID>`
 
-Remove container and its volumes : `docker 'rm -v <ID>`
+Remove container and its volumes : `docker rm -v <ID>`
 
 Start container : `docker start <ID>`
 
