@@ -97,6 +97,14 @@ Run container using data container : `docker run -it --volumes-from datacontaine
 
 Backup container : `docker run --volumes-from logdata -v /home/toto/backups:/backups ubuntu tar cvzf /backup/my_logs.tar /var/log/app`
 
+List all the dangling volumes not linked anymore to any container : `docker volume ls -f dangling=true`
+
+Same thing but with quiet mode to display only volumes' md5 : `docker volume ls -qf dangling=true`
+
+Remove volume : `docker volume rm <volume name>`
+
+Remove dangling volumes : ``docker volume rm `docker volume ls -qf dangling=true` ``
+
 Map port 8080 tomcat container to 80 on host : `docker run -d -p 80:8080 tomcat` 
 
 Execute command in container : `docker exec <ID> my_command`
