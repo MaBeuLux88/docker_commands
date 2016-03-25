@@ -111,7 +111,18 @@ Execute command in container : `docker exec <ID> my_command`
 
 Show the ports mapped : `docker port <ID>`
 
+Start MySQL container (which already has an anonymous volume in his official Dockerfile) : `docker run -e MYSQL_ROOT_PASSWORD=admin -d -p 3306:3306 --name mysql-small-prod mysql:latest`
 
+Backup MySQL container : `docker run --rm --volumes-from mysql-small-prod -v $(pwd):/backups debian:latest tar cvzf /backups/mysql-backup-$(date -d "today" +"%Y-%m-%d-%H-%M-%S").tgz /var/lib/mysql`
+
+Restoring data in a new MySQL container : 
+```bash
+#!/bin/bash
+docker run --name dataContainerMysql -v data-mysql:/var/lib/mysql busybox true
+docker run --rm --volumes-from dataContainerMysql -v $(pwd):/data debian:latest tar xvzf /data/$1
+docker run --volumes-from dataContainerMysql -e MYSQL_ROOT_PASSWORD=admin -d -p 3306:3306 --name mysql-restored mysql:latest
+docker rm dataContainerMysql
+```
 
 # Example Dockerfile
 
